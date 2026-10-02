@@ -1,0 +1,72 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #f4f6f8;
+  color: #2d3e50;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ---- Sidebar: hidden on small screens ---- */
+.sidebar {
+  display: none;
+  width: 220px;
+  background: #2d3e50;
+  color: #fff;
+  padding: 20px 0;
+}
+.sidebar .logo {
+  padding: 0 20px 20px;
+  font-weight: bold;
+  font-size: 18px;
+}
+.sidebar button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  color: #cfd8e3;
+  font-size: 15px;
+  cursor: pointer;
+}
+.sidebar button.active { background: #3d5170; color: #fff; }
+.sidebar button:hover { background: #3d5170; }
+
+/* ---- Main content ---- */
+.main {
+  flex: 1;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ---- Bottom tab bar: shown only on small screens ---- */
+.tabbar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  background: #2d3e50;
+}
+.tabbar button {
+  flex: 1;
+  padding: 14px 0;
+  background: none;
+  border: none;
+  color: #cfd8e3;
+  font-size: 13px;
+  cursor: pointer;
+}
+.tabbar button.active { color: #fff; border-top: 3px solid #4e8a63; }
+
+/* ---- Responsive switch: 800px is the phone/desktop boundary ---- */
+@media (min-width: 800px) {
+  .sidebar { display: block; }
+  .tabbar { display: none; }
+  .main { padding: 40px; }
+}
