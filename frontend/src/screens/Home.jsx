@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db, syncOutbox, refreshWaterPoints } from "../db.js";
-import { refreshWaterPoints as refreshWPs } from "../api.js";
+import { db } from "../db.js";
+import { syncOutbox, refreshWaterPoints } from "../api.js";
 
 export default function Home({ onNavigate }) {
   const [online, setOnline] = useState(navigator.onLine);
@@ -29,7 +29,7 @@ export default function Home({ onNavigate }) {
     try {
       const r = await syncOutbox();
       setMessage(JSON.stringify(r));
-      await refreshWPs();
+      await refreshWaterPoints();
     } catch (e) {
       setMessage(`Sync error: ${e.message}`);
     }

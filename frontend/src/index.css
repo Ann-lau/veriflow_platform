@@ -70,3 +70,10 @@ body {
   .tabbar { display: none; }
   .main { padding: 40px; }
 }
+
+.banner { background: #e8eef5; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
+.primary { background: #2d3e50; color: #fff; border: none; padding: 12px 18px; border-radius: 8px; cursor: pointer; margin-right: 8px; }
+.card { background: #fff; border: 1px solid #dfe5ea; border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+.badge { float: right; font-size: 12px; padding: 2px 8px; border-radius: 10px; }
+.badge.ok { background: #dcefe2; color: #2f6b44; }
+.badge.queued { background: #f5e8d0; color: #8a6d1f; }
