@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./index.css";
+import Home from "./screens/Home.jsx";
 
 const NAV = [
   { id: "home", label: "Home", icon: "🏠" },
@@ -29,7 +30,7 @@ export default function App() {
 
       <main className="main">
         <h1>{NAV.find((n) => n.id === screen).label}</h1>
-        {screen === "home" && <p>Technician home screen goes here.</p>}
+        {screen === "home" && <Home onNavigate={setScreen} />}
         {screen === "log" && <p>Log breakdown form goes here.</p>}
         {screen === "evidence" && <p>Evidence capture goes here.</p>}
         {screen === "dashboard" && <p>District dashboard goes here.</p>}
