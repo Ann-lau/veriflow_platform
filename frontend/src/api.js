@@ -40,7 +40,18 @@ export async function syncOutbox() {
   const results = await res.json();
   for (const r of results) {
     if (r.status === "applied" || r.status === "duplicate") {
+      // 1. mark the outbox entry as synced
       await db.outbox.where("op_id").equals(r.op_id).modify({ synced: 1 });
+
+      // 2. also flip the synced flag on the entity row the badge reads
+      const op = ops.find((o) => o.op_id === r.op_id);
+      if (op && op.payload && op.payload.id) {
+        if (op.entity === "workorder") {
+          await db.workOrders.update(op.payload.id, { synced: 1 });
+        } else if (op.entity === "evidence") {
+          await db.evidence.update(op.payload.id, { synced: 1 });
+        }
+      }
     }
     // "error" stays queued for the next attempt – nothing is lost
   }
