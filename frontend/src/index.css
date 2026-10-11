@@ -92,3 +92,17 @@ select, textarea, input {
   font-weight: 400;
 }
 .check input { width: auto; }
+
+.kpirow { display: flex; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
+.kpi {
+  flex: 1; min-width: 120px; background: #fff;
+  border: 1px solid #dfe5ea; border-radius: 8px; padding: 14px;
+}
+.kpi-num { font-size: 26px; font-weight: bold; }
+.kpi-num.ok { color: #2f6b44; }
+.kpi-num.bad { color: #b0452f; }
+.kpi-label { font-size: 13px; color: #5a6a7a; }
+
+table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: #fff; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e3e8ee; font-size: 14px; }
+th { background: #eef2f6; font-size: 13px; }

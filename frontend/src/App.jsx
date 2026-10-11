@@ -3,6 +3,7 @@ import "./index.css";
 import Home from "./screens/Home.jsx";
 import Log from "./screens/Log.jsx";
 import Evidence from "./screens/Evidence.jsx";
+import Dashboard from "./screens/Dashboard.jsx";
 
 const NAV = [
   { id: "home", label: "Home", icon: "🏠" },
@@ -35,7 +36,7 @@ export default function App() {
         {screen === "home" && <Home onNavigate={setScreen} />}
         {screen === "log" && <Log onNavigate={setScreen} />}
         {screen === "evidence" && <Evidence />}
-        {screen === "dashboard" && <p>District dashboard goes here.</p>}
+        {screen === "dashboard" && <Dashboard />}
         {screen === "reports" && <p>Funder reports go here.</p>}
       </main>
 
