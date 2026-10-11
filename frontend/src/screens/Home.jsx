@@ -41,31 +41,61 @@ export default function Home({ onNavigate }) {
       <div className="banner">
         {online ? "🟢 Online" : "🔴 OFFLINE – changes saved on device"}
       </div>
-
       <button className="primary" onClick={() => onNavigate("log")}>
         + Log Breakdown
-      </button>
+      </button>{" "}
       <button onClick={doSync} disabled={!online}>
         Sync now {pending ? `(${pending} pending)` : ""}
       </button>
       {message && <p className="note">{message}</p>}
-
-      <h3>My Work Orders ({workOrders?.length ?? 0})</h3>
-      {workOrders?.map((o) => (
-        <div className="card" key={o.id}>
-          <b>{o.id.slice(0, 8)}</b> – {o.description}
-          <span className={o.synced ? "badge ok" : "badge queued"}>
-            {o.synced ? "synced" : "queued"}
-          </span>
-        </div>
-      ))}
-
-      <h3>Water Points ({waterPoints?.length ?? 0})</h3>
-      {waterPoints?.map((wp) => (
-        <div className="card" key={wp.id}>
-          <b>{wp.id.slice(0, 8)}</b> – {wp.type} – {wp.status}
-        </div>
-      ))}
+      <h3>Work Orders</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Work Order</th>
+            <th>Description</th>
+            <th>State</th>
+            <th>Sync</th>
+          </tr>
+        </thead>
+        <tbody>
+          {workOrders?.map((o) => (
+            <tr key={o.id}>
+              <td>{o.id.slice(0, 8)}</td>
+              <td>{o.description}</td>
+              <td>
+                <span className="badge queued">{o.state}</span>
+              </td>
+              <td>
+                <span className={o.synced ? "badge ok" : "badge queued"}>
+                  {o.synced ? "synced" : "queued"}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <h3>Water Points</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Water Point</th>
+            <th>Type</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {waterPoints?.map((wp) => (
+            <tr key={wp.id}>
+              <td>{wp.id.slice(0, 8)}</td>
+              <td>{wp.type}</td>
+              <td>
+                <span className="badge queued">{wp.status}</span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

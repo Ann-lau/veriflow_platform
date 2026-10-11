@@ -74,7 +74,8 @@ body {
 .banner { background: #e8eef5; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
 .primary { background: #2d3e50; color: #fff; border: none; padding: 12px 18px; border-radius: 8px; cursor: pointer; margin-right: 8px; }
 .card { background: #fff; border: 1px solid #dfe5ea; border-radius: 8px; padding: 12px; margin-bottom: 8px; }
-.badge { float: right; font-size: 12px; padding: 2px 8px; border-radius: 10px; }
+.badge {display: inline-block;font-size: 12px;padding: 2px 8px;border-radius: 10px;}
+
 .badge.ok { background: #dcefe2; color: #2f6b44; }
 .badge.queued { background: #f5e8d0; color: #8a6d1f; }
 
@@ -106,3 +107,34 @@ select, textarea, input {
 table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: #fff; }
 th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e3e8ee; font-size: 14px; }
 th { background: #eef2f6; font-size: 13px; }
+
+/* ---- Section rhythm ---- */
+h2 { margin-bottom: 12px; }
+h3 { margin: 20px 0 8px; }
+
+/* ---- Consistent buttons: all buttons styled the same way ---- */
+button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #cfd8e3;
+  background: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+button.primary {
+  background: #2d3e50;
+  color: #fff;
+  border-color: #2d3e50;
+}
+button:hover:not(:disabled) { filter: brightness(0.96); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---- Breathing room in cards ---- */
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+
