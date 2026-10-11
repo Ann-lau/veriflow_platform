@@ -42,3 +42,35 @@ export async function saveWorkOrderOffline(data) {
   });
   return id;
 }
+
+// Save evidence locally: photo stored as a Blob in IndexedDB,
+// plus a queued operation. The GPS and time are captured by the
+// device at the moment of submission (FR2).
+export async function saveEvidenceOffline(data) {
+  const id = data.id || newId();
+  await db.transaction("rw", db.evidence, db.outbox, async () => {
+    await db.evidence.put({
+      id,
+      workorder_id: data.workorder_id,
+      photoBlob: data.photoBlob || null,   // stored as Blob, not a file path
+      parts_replaced: data.parts_replaced,
+      flow_verified: data.flow_verified,
+      gps_captured_lat: data.gps_captured_lat,
+      gps_captured_lon: data.gps_captured_lon,
+      captured_at: data.captured_at,
+      validation_result: "pending",
+      synced: 0,
+    });
+    await queueOperation("evidence", "create", {
+      id,
+      workorder_id: data.workorder_id,
+      parts_replaced: data.parts_replaced,
+      flow_verified: data.flow_verified,
+      gps_captured_lat: data.gps_captured_lat,
+      gps_captured_lon: data.gps_captured_lon,
+      captured_at: data.captured_at,
+      photo_ref: data.photoBlob ? "stored-on-device" : null,
+    });
+  });
+  return id;
+}
