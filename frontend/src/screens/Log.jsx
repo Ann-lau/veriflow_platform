@@ -53,7 +53,10 @@ export default function Log({ onNavigate }) {
 
       {savedId && (
         <p className="note">
-          ✔ Saved offline as {savedId.slice(0, 8)} – will sync when connected.
+          ✔ Saved on device as {savedId.slice(0, 8)}
+          {navigator.onLine
+            ? " – syncing now."
+            : " – will sync automatically when you're back online."}
         </p>
       )}
     </div>
