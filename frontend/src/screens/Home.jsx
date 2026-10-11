@@ -37,6 +37,7 @@ export default function Home({ onNavigate }) {
 
   return (
     <div>
+      <h2>Home</h2>
       <div className="banner">
         {online ? "🟢 Online" : "🔴 OFFLINE – changes saved on device"}
       </div>

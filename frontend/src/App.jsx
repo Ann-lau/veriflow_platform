@@ -32,7 +32,6 @@ export default function App() {
       </nav>
 
       <main className="main">
-        <h1>{NAV.find((n) => n.id === screen).label}</h1>
         {screen === "home" && <Home onNavigate={setScreen} />}
         {screen === "log" && <Log onNavigate={setScreen} />}
         {screen === "evidence" && <Evidence />}
