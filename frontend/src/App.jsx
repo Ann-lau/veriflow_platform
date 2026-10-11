@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./index.css";
 import Home from "./screens/Home.jsx";
 import Log from "./screens/Log.jsx";
+import Evidence from "./screens/Evidence.jsx";
 
 const NAV = [
   { id: "home", label: "Home", icon: "🏠" },
@@ -33,7 +34,7 @@ export default function App() {
         <h1>{NAV.find((n) => n.id === screen).label}</h1>
         {screen === "home" && <Home onNavigate={setScreen} />}
         {screen === "log" && <Log onNavigate={setScreen} />}
-        {screen === "evidence" && <p>Evidence capture goes here.</p>}
+        {screen === "evidence" && <Evidence />}
         {screen === "dashboard" && <p>District dashboard goes here.</p>}
         {screen === "reports" && <p>Funder reports go here.</p>}
       </main>

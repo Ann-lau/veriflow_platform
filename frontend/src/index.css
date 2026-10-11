@@ -83,3 +83,12 @@ select, textarea, input {
   width: 100%; padding: 10px; border: 1px solid #cfd8e3;
   border-radius: 8px; font-size: 14px; font-family: inherit;
 }
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  font-weight: 400;
+}
+.check input { width: auto; }
