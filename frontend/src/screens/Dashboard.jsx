@@ -1,4 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
+import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import { db } from "../db.js";
 
 export default function Dashboard() {
@@ -12,6 +14,24 @@ export default function Dashboard() {
   const broken = (waterPoints ?? []).filter(
     (wp) => wp.status === "broken",
   ).length;
+
+  // Center the map on the average position of the water points,
+  // falling back to central Kenya if the list is empty.
+  const center =
+    total > 0
+      ? [
+          (waterPoints ?? []).reduce((sum, wp) => sum + Number(wp.gps_lat), 0) /
+            total,
+          (waterPoints ?? []).reduce((sum, wp) => sum + Number(wp.gps_lon), 0) /
+            total,
+        ]
+      : [-1.29, 36.82];
+
+  function pinColor(status) {
+    if (status === "functional") return "#2f6b44"; // green
+    if (status === "broken") return "#b0452f"; // red
+    return "#8a93a0"; // gray = unknown
+  }
 
   return (
     <div>
@@ -36,6 +56,32 @@ export default function Dashboard() {
         </div>
       </div>
 
+      <h3>Water Point Map</h3>
+      <div className="mapwrap">
+        <MapContainer center={center} zoom={9} className="themap">
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {(waterPoints ?? []).map((wp) => (
+            <CircleMarker
+              key={wp.id}
+              center={[Number(wp.gps_lat), Number(wp.gps_lon)]}
+              radius={10}
+              pathOptions={{ color: pinColor(wp.status), fillOpacity: 0.9 }}
+            >
+              <Popup>
+                <b>{wp.type}</b>
+                <br />
+                Status: {wp.status}
+                <br />
+                ID: {wp.id.slice(0, 8)}
+              </Popup>
+            </CircleMarker>
+          ))}
+        </MapContainer>
+      </div>
+
       <h3>Water Points</h3>
       <table>
         <thead>
@@ -51,13 +97,7 @@ export default function Dashboard() {
               <td>{wp.id.slice(0, 8)}</td>
               <td>{wp.type}</td>
               <td>
-                <span
-                  className={
-                    wp.status === "functional" ? "badge ok" : "badge queued"
-                  }
-                >
-                  {wp.status}
-                </span>
+                <span className="badge queued">{wp.status}</span>
               </td>
             </tr>
           ))}
