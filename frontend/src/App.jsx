@@ -4,6 +4,7 @@ import Home from "./screens/Home.jsx";
 import Log from "./screens/Log.jsx";
 import Evidence from "./screens/Evidence.jsx";
 import Dashboard from "./screens/Dashboard.jsx";
+import OnlineBanner from "./OnlineBanner.jsx";
 
 const NAV = [
   { id: "home", label: "Home", icon: "🏠" },
@@ -32,6 +33,7 @@ export default function App() {
       </nav>
 
       <main className="main">
+        <OnlineBanner />
         {screen === "home" && <Home onNavigate={setScreen} />}
         {screen === "log" && <Log onNavigate={setScreen} />}
         {screen === "evidence" && <Evidence />}

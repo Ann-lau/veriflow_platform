@@ -138,4 +138,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   gap: 10px;
 }
 
+/* ---- Map ---- */
+.map-wrap {
+  height: 420px;
+  border-radius: 8px;
+  border: 1px solid #dfe5ea;
+  margin-bottom: 20px;
+}
+.leaflet-container { height: 100%; width: 100%; }
 

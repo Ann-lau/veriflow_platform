@@ -35,7 +35,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h2>District Dashboard</h2>
+      <h2>Dashboard</h2>
 
       <div className="kpirow">
         <div className="kpi">
@@ -57,8 +57,8 @@ export default function Dashboard() {
       </div>
 
       <h3>Water Point Map</h3>
-      <div className="mapwrap">
-        <MapContainer center={center} zoom={9} className="themap">
+      <div className="map-wrap">
+        <MapContainer center={center} zoom={9}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
