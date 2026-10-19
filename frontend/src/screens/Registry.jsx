@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchRegistry } from "../api.js";
+import { KAJIADO_OUTLINE } from "../data/kajiado_boundary.js";
 import "./Registry.css";
 
 const CACHE_KEY = "veriflow.registry.v1";
@@ -62,53 +63,51 @@ function Shape({ shape, color, x = 0, y = 0, size = 4 }) {
   return <circle cx={x} cy={y} r={size} fill={color} />;
 }
 
-// Offline map: points drawn straight from their coordinates, no map tiles needed.
+// Offline map: the county outline and the points are drawn from coordinates, no map tiles needed.
 function PointMap({ points, visible, selectedId, onSelect }) {
   const view = useMemo(() => {
-    const lats = points.map((p) => p.lat);
-    const lons = points.map((p) => p.lon);
-    const minLat = Math.min(...lats),
-      maxLat = Math.max(...lats);
+    const lons = KAJIADO_OUTLINE.map((c) => c[0]);
+    const lats = KAJIADO_OUTLINE.map((c) => c[1]);
     const minLon = Math.min(...lons),
       maxLon = Math.max(...lons);
+    const minLat = Math.min(...lats),
+      maxLat = Math.max(...lats);
     const kx = Math.cos((((minLat + maxLat) / 2) * Math.PI) / 180); // shrink longitude at this latitude
     const w = (maxLon - minLon) * kx,
       h = maxLat - minLat;
     const S = 600; // square canvas
-    const pad = 30;
+    const pad = 24;
     const scale = Math.min((S - 2 * pad) / w, (S - 2 * pad) / h);
     const ox = (S - w * scale) / 2,
       oy = (S - h * scale) / 2;
-    const project = (p) => ({
-      x: ox + (p.lon - minLon) * kx * scale,
-      y: oy + (maxLat - p.lat) * scale,
+    const xy = (lon, lat) => ({
+      x: ox + (lon - minLon) * kx * scale,
+      y: oy + (maxLat - lat) * scale,
     });
+    const project = (p) => xy(p.lon, p.lat);
+    const outline =
+      KAJIADO_OUTLINE.map(([lon, lat], i) => {
+        const { x, y } = xy(lon, lat);
+        return `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
+      }).join("") + "Z";
     const barPx = (50 / 111.32) * scale; // 1 degree of latitude is about 111.32 km
-    return { S, project, barPx };
-  }, [points]);
+    return { S, project, outline, barPx };
+  }, []);
 
   const shown = points.filter((p) => visible[p.cls]);
   return (
     <svg
       viewBox={`0 0 ${view.S} ${view.S}`}
       role="img"
-      aria-label="Map of Kajiado water points by status at survey"
+      aria-label="Map of Kajiado County water points by status at survey"
     >
-      <g>
-        {points.map((p) => {
-          const { x, y } = view.project(p);
-          return (
-            <circle
-              key={`h${p.id}`}
-              cx={x}
-              cy={y}
-              r="11"
-              fill="#efeadf"
-              opacity=".9"
-            />
-          );
-        })}
-      </g>
+      <path
+        d={view.outline}
+        fill="#f6f2e8"
+        stroke="#7b8794"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
       {CLASSES.map((c) =>
         shown
           .filter((p) => p.cls === c.key)
@@ -124,7 +123,7 @@ function PointMap({ points, visible, selectedId, onSelect }) {
                 onFocus={() => onSelect(p)}
                 style={{ cursor: "pointer" }}
               >
-                <Shape shape={c.shape} color={c.color} x={x} y={y} size={3.6} />
+                <Shape shape={c.shape} color={c.color} x={x} y={y} size={3.8} />
                 <circle cx={x} cy={y} r="9" fill="transparent" />
               </g>
             );
@@ -146,6 +145,9 @@ function PointMap({ points, visible, selectedId, onSelect }) {
             />
           );
         })()}
+      <text x="20" y="34" fontSize="15" fontWeight="700" fill="#26323f">
+        Kajiado County
+      </text>
       <line
         x1="20"
         x2={20 + view.barPx}
@@ -272,6 +274,19 @@ export default function Registry() {
         </div>
       )}
 
+      <div className="stats">
+        {CLASSES.map((c) => (
+          <div key={c.key}>
+            <small>{c.label}</small>
+            <b>{counts[c.key]}</b>
+          </div>
+        ))}
+        <div>
+          <small>Total</small>
+          <b>{s.total}</b>
+        </div>
+      </div>
+
       <div className="layout">
         <section className="mapcol">
           <div className="mapbox">
@@ -294,18 +309,6 @@ export default function Registry() {
             ) : (
               <span className="muted">Select a point to see its record.</span>
             )}
-          </div>
-          <div className="mfoot">
-            {CLASSES.map((c) => (
-              <div key={c.key}>
-                <b>{counts[c.key]}</b>
-                <small>{c.label}</small>
-              </div>
-            ))}
-            <div>
-              <b>{s.total}</b>
-              <small>Total</small>
-            </div>
           </div>
         </section>
 
