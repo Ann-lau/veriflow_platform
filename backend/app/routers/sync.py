@@ -6,15 +6,10 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from .. import models
 from ..models import utcnow
+from ..state_machine import allowed_next
 
 router = APIRouter(prefix="/sync", tags=["sync"])
 
-VALID_TRANSITIONS = {
-    "logged": {"dispatched"},
-    "dispatched": {"parts_replaced"},
-    "parts_replaced": {"flow_verified"},
-    "flow_verified": set(),
-}
 
 @router.post("")
 def sync(operations: list[dict], db: Session = Depends(get_db)):
@@ -76,14 +71,15 @@ def update_workorder(db: Session, p: dict):
     wo = db.get(models.WorkOrder, p.get("id"))
     if not wo:
         return "error", "work order not found"
+
     new_state = p.get("state")
     if new_state and new_state != wo.state:
-        allowed = VALID_TRANSITIONS.get(wo.state, set())
-        if new_state not in allowed:
+        if new_state not in allowed_next(wo.state):
             return "error", f"illegal transition {wo.state} -> {new_state}"
         db.add(models.StateTransition(workorder_id=wo.id, from_state=wo.state,
                                       to_state=new_state, actor_id=p.get("technician_id")))
         wo.state = new_state
+
     if p.get("description"):
         wo.description = p["description"]
     return "applied", None
