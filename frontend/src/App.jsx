@@ -4,6 +4,7 @@ import Home from "./screens/Home.jsx";
 import Log from "./screens/Log.jsx";
 import Evidence from "./screens/Evidence.jsx";
 import Dashboard from "./screens/Dashboard.jsx";
+import Registry from "./screens/Registry.jsx";
 import OnlineBanner from "./OnlineBanner.jsx";
 import { syncOutbox } from "./api.js";
 
@@ -45,7 +46,7 @@ const ROLES = {
 };
 
 // Screens that are already built. Everything else shows a placeholder until its step.
-const BUILT = ["home", "log", "evidence", "dashboard"];
+const BUILT = ["home", "log", "evidence", "dashboard", "registry"];
 
 function ComingSoon({ title }) {
   return (
@@ -144,6 +145,7 @@ export default function App() {
         {screen === "log" && <Log onNavigate={setScreen} />}
         {screen === "evidence" && <Evidence />}
         {screen === "dashboard" && <Dashboard />}
+        {screen === "registry" && <Registry />}
         {!BUILT.includes(screen) && (
           <ComingSoon title={current.full ?? current.label} />
         )}
