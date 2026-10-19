@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./index.css";
 import Home from "./screens/Home.jsx";
 import Log from "./screens/Log.jsx";
 import Evidence from "./screens/Evidence.jsx";
 import Dashboard from "./screens/Dashboard.jsx";
 import OnlineBanner from "./OnlineBanner.jsx";
+import {syncOutbox} from "./api.js";
 
 const NAV = [
   { id: "home", label: "Home", icon: "🏠" },
@@ -16,6 +17,25 @@ const NAV = [
 
 export default function App() {
   const [screen, setScreen] = useState("home");
+useEffect(() => {
+  async function trySync() {
+    if (!navigator.onLine) return; // never burn data or spam errors while offline
+    try {
+      await syncOutbox();
+    } catch {
+      // Server unreachable even though the browser says online:
+      // stay quiet, the interval will retry.
+    }
+  }
+
+  trySync(); // flush anything queued from a previous session
+  window.addEventListener("online", trySync); // instant flush when connection returns
+  const timer = setInterval(trySync, 30000); // safety net: retry every 30s
+  return () => {
+    window.removeEventListener("online", trySync);
+    clearInterval(timer);
+  };
+}, []);
 
   return (
     <div className="app">

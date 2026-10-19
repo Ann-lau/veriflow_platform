@@ -56,7 +56,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <h3>Water Point Map</h3>
+      <h3>Water Points Map</h3>
       <div className="map-wrap">
         <MapContainer center={center} zoom={9}>
           <TileLayer

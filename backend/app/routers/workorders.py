@@ -3,16 +3,11 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from .. import models
 from ..models import utcnow
+from ..state_machine import allowed_next
 import uuid
 
 router = APIRouter(prefix="/workorders", tags=["workorders"])
 
-VALID_TRANSITIONS = {
-    "logged": {"dispatched"},
-    "dispatched": {"parts_replaced"},
-    "parts_replaced": {"flow_verified"},
-    "flow_verified": set(),
-}
 
 @router.post("")
 def create_workorder(waterpoint_id: str, description: str = "",
@@ -51,7 +46,7 @@ def transition(wo_id: str, new_state: str, actor_id: str = None,
     wo = db.get(models.WorkOrder, wo_id)
     if not wo:
         raise HTTPException(404, "Work order not found")
-    allowed = VALID_TRANSITIONS.get(wo.state, set())
+    allowed = allowed_next(wo.state)
     if new_state not in allowed:
         raise HTTPException(
             422, f"Illegal transition: {wo.state} -> {new_state}. "
