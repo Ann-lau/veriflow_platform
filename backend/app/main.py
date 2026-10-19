@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import Base, engine
 from . import models  # noqa: F401  (registers all model classes on Base)
-from .routers import waterpoints, workorders, sync, evidence, reports, dashboard
+from .routers import waterpoints, workorders, sync, evidence, reports, dashboard, registry
 
 # Create all tables from the models 
 Base.metadata.create_all(bind=engine)
@@ -23,6 +23,7 @@ app.include_router(sync.router)
 app.include_router(evidence.router)
 app.include_router(reports.router)
 app.include_router(dashboard.router)
+app.include_router(registry.router)
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "veriflow-api"}

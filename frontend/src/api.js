@@ -61,3 +61,11 @@ export async function syncOutbox() {
     errors: results.filter((r) => r.status === "error").length,
   };
 }
+
+
+// Dashboard: one request returns every number the page needs.
+export async function fetchDashboardSummary() {
+  const res = await fetch(`${API_BASE}/dashboard/summary`);
+  if (!res.ok) throw new Error(`Dashboard request failed: ${res.status}`);
+  return res.json();
+}
