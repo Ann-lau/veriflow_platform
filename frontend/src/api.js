@@ -69,3 +69,11 @@ export async function fetchDashboardSummary() {
   if (!res.ok) throw new Error(`Dashboard request failed: ${res.status}`);
   return res.json();
 }
+
+
+// Registry: the real WPDx points plus every breakdown, in one request.
+export async function fetchRegistry() {
+  const res = await fetch(`${API_BASE}/registry`);
+  if (!res.ok) throw new Error(`Registry request failed: ${res.status}`);
+  return res.json();
+}
