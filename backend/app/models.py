@@ -21,6 +21,20 @@ class WaterPoint(Base):
     status = Column(String, default="unknown")     # functional | broken | unknown
     registered_date = Column(DateTime, default=utcnow)
 
+    # --- Real-registry fields (WPDx import). All nullable so existing rows stay valid. ---
+    wpdx_id = Column(String, unique=True, index=True)   # natural key: makes re-imports idempotent
+    water_tech = Column(String)                         # e.g. "Hand Pump - Afridev"
+    county = Column(String)
+    sub_county = Column(String)
+    management = Column(String)
+    pay = Column(String)
+    installer = Column(String)
+    install_year = Column(Integer)
+    status_at_survey = Column(String)                   # WPDx status on the survey date, NOT live status
+    last_survey_date = Column(DateTime)
+    source_org = Column(String)                         # contributor, needed for CC BY attribution
+    source_dataset = Column(String)
+
 class User(Base):
     __tablename__ = "users"
     id = Column(String, primary_key=True, default=gen_uuid)
