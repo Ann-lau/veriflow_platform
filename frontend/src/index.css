@@ -127,10 +127,10 @@ td { padding: 8px 6px; border-top: 1px solid var(--border); }
   display: flex; justify-content: space-between; align-items: center; gap: 12px;
   padding: 8px 16px;
 }
-.topbar .roles { margin: 0; gap: 2px; background: #1b2530; border-radius: 8px; padding: 2px; flex-wrap: nowrap; }
+.topbar .roles { margin: 0; gap: 4px; background: #1b2530; border-radius: 10px; padding: 3px; flex-wrap: nowrap; }
 .topbar .roles button {
-  min-height: 0; padding: 6px 12px; border: 0; border-radius: 6px;
-  background: none; color: #8e9aaa; font-size: 12px; font-weight: 500; white-space: nowrap;
+  min-height: 0; padding: 7px 18px; border: 0; border-radius: 8px;
+  background: none; color: #8e9aaa; font-size: 13px; font-weight: 600; white-space: nowrap;
 }
 .topbar .roles button.on { background: var(--accent); color: #3b2a00; font-weight: 700; }
 

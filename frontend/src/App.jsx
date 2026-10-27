@@ -125,31 +125,35 @@ export default function App() {
         ))}
       </aside>
 
-      <main className="main">
-        <div className="roles" role="tablist" aria-label="Role">
-          {Object.entries(ROLES).map(([id, r]) => (
-            <button
-              key={id}
-              role="tab"
-              aria-selected={role === id}
-              className={role === id ? "on" : ""}
-              onClick={() => chooseRole(id)}
-            >
-              {r.label}
-            </button>
-          ))}
-        </div>
+      <div className="stage">
+        <header className="topbar">
+          <div className="roles" role="tablist" aria-label="Role">
+            {Object.entries(ROLES).map(([id, r]) => (
+              <button
+                key={id}
+                role="tab"
+                aria-selected={role === id}
+                className={role === id ? "on" : ""}
+                onClick={() => chooseRole(id)}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </header>
 
-        <OnlineBanner />
-        {screen === "home" && <Home onNavigate={setScreen} />}
-        {screen === "log" && <Log onNavigate={setScreen} />}
-        {screen === "evidence" && <Evidence />}
-        {screen === "dashboard" && <Dashboard />}
-        {screen === "registry" && <Registry />}
-        {!BUILT.includes(screen) && (
-          <ComingSoon title={current.full ?? current.label} />
-        )}
-      </main>
+        <main className="main">
+          <OnlineBanner />
+          {screen === "home" && <Home onNavigate={setScreen} />}
+          {screen === "log" && <Log onNavigate={setScreen} />}
+          {screen === "evidence" && <Evidence />}
+          {screen === "dashboard" && <Dashboard />}
+          {screen === "registry" && <Registry />}
+          {!BUILT.includes(screen) && (
+            <ComingSoon title={current.full ?? current.label} />
+          )}
+        </main>
+      </div>
 
       <nav className="tabbar" aria-label="Main">
         {nav
