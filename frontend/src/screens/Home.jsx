@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../db.js";
 import { syncOutbox, refreshWaterPoints } from "../api.js";
 import { useConnection } from "../connection.jsx";
+import { useMemo, useState } from "react";
 import TierNotice from "../TierNotice.jsx";
 import "./Home.css";
 
@@ -63,9 +64,18 @@ export default function Home({ onNavigate }) {
   const orders = [...(workOrders ?? [])].sort(
     (a, b) => (b.created_at ?? 0) - (a.created_at ?? 0),
   );
-  const label = (o) =>
-    pointById.get(o.waterpoint_id)?.name ??
-    `Water point ${o.waterpoint_id.slice(0, 8)}`;
+    const registryById = useMemo(
+      () => new Map((readRegistryCache()?.points ?? []).map((p) => [p.id, p])),
+      [],
+    );
+    const label = (o) => {
+      const r = registryById.get(o.waterpoint_id);
+      if (r) return `${r.wpdx_id} · Kajiado ${r.sub_county}`;
+      return (
+        pointById.get(o.waterpoint_id)?.name ??
+        `Water point ${o.waterpoint_id.slice(0, 8)}`
+      );
+    };
 
   async function doSync() {
     setMessage("");
