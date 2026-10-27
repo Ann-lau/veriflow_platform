@@ -91,11 +91,12 @@ export default function Home({ onNavigate }) {
         Your jobs, and what the connection can do right now.
       </p>
 
-      <TierNotice />
-
-      <button className="cta" onClick={() => onNavigate("log")}>
-        Report breakdown
-      </button>
+      <div className="topline">
+        <TierNotice />
+        <button className="cta" onClick={() => onNavigate("log")}>
+          Report breakdown
+        </button>
+      </div>
 
       <div className="qhead">
         <h2>My queue ({orders.length})</h2>
@@ -112,17 +113,19 @@ export default function Home({ onNavigate }) {
         <p className="muted">No jobs yet. Report a breakdown to start one.</p>
       )}
 
-      {orders.map((o) => {
-        const d = describe(o, evidenceByOrder.get(o.id));
-        return (
-          <article className="wo" key={o.id}>
-            <b>{o.description || "Breakdown"}</b>
-            <small>{label(o)}</small>
-            <Progress step={d.step} />
-            <span className={`pill ${d.tone}`}>{d.pill}</span>
-          </article>
-        );
-      })}
+      <div className="queue">
+        {orders.map((o) => {
+          const d = describe(o, evidenceByOrder.get(o.id));
+          return (
+            <article className="wo" key={o.id}>
+              <b>{o.description || "Breakdown"}</b>
+              <small>{label(o)}</small>
+              <Progress step={d.step} />
+              <span className={`pill ${d.tone}`}>{d.pill}</span>
+            </article>
+          );
+        })}
+      </div>
     </div>
   );
 }
