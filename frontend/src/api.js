@@ -1,6 +1,7 @@
 import { db } from "./db.js";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
+export const API_BASE =
+  import.meta.env.VITE_API_BASE || "http://localhost:8000";
 
 export async function fetchWaterPoints() {
   const res = await fetch(`${API_BASE}/waterpoints`);
@@ -18,9 +19,13 @@ export async function refreshWaterPoints() {
 
 // Increment 1 core: send the whole outbox. The server deduplicates by
 // op_id, so retries and replays are always safe (FR11, NFR2).
-export async function syncOutbox() {
-  if (!navigator.onLine) return { skipped: true, reason: "offline" };
-  const ops = await db.outbox.where("synced").equals(0).toArray();
+export async function syncOutbox(tier = 4) {
+  if (tier === 0 || !navigator.onLine)
+    return { skipped: true, reason: "offline" };
+  let ops = await db.outbox.where("synced").equals(0).toArray();
+  // Adaptive sync: on a weak connection send the small records first and let the
+  // heavy evidence (photos) wait for a better signal. Nothing is lost, it stays queued.
+  if (tier < 4) ops = ops.filter((o) => o.entity !== "evidence");
   if (ops.length === 0) return { applied: 0, note: "nothing to sync" };
 
   const res = await fetch(`${API_BASE}/sync`, {
