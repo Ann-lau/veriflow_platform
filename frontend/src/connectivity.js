@@ -28,7 +28,12 @@ export async function probe(url, timeoutMs = TIMEOUT_MS) {
   const timer = setTimeout(() => ctl.abort(), timeoutMs);
   const start = performance.now();
   try {
-    await fetch(url, { method: "HEAD", cache: "no-store", signal: ctl.signal });
+        await fetch(url, {
+          method: "HEAD",
+          mode: "no-cors",
+          cache: "no-store",
+          signal: ctl.signal,
+        });
     return { ok: true, rtt: Math.round(performance.now() - start) };
   } catch {
     return { ok: false, rtt: null };
