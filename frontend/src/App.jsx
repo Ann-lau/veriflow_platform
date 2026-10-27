@@ -145,7 +145,7 @@ export default function App() {
         </header>
 
         <main className="main">
-          <OnlineBanner />
+          {role !== "technician" && <OnlineBanner />}
           {screen === "home" && <Home onNavigate={setScreen} />}
           {screen === "log" && <Log onNavigate={setScreen} />}
           {screen === "evidence" && <Evidence />}
