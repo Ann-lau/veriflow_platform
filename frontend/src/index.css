@@ -115,3 +115,35 @@ select, textarea, input {
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th { text-align: left; color: var(--muted); font-weight: 600; padding: 8px 6px; }
 td { padding: 8px 6px; border-top: 1px solid var(--border); }
+
+
+/* ===== Shell, final design =====
+   Added after the base styles on purpose: same specificity, later in the file, so it wins.
+   Dark side nav and dark top bar stay on every screen; the page itself is flat. */
+.stage { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.topbar {
+  background: var(--slate); color: var(--on-dark);
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 8px 16px;
+}
+.topbar .roles { margin: 0; gap: 2px; background: #1b2530; border-radius: 8px; padding: 2px; flex-wrap: nowrap; }
+.topbar .roles button {
+  min-height: 0; padding: 6px 12px; border: 0; border-radius: 6px;
+  background: none; color: #8e9aaa; font-size: 12px; font-weight: 500; white-space: nowrap;
+}
+.topbar .roles button.on { background: var(--accent); color: #3b2a00; font-weight: 700; }
+
+.main { max-width: none; margin: 0; padding: 16px 18px 24px; }
+@media (min-width: 800px) { .main { padding: 16px 18px 24px; } }
+
+.sidebar { width: 208px; padding: 14px 10px; }
+.sidebar .logo { padding: 4px 8px; font-size: 17px; }
+.sidebar .who { padding: 0 8px 14px; font-size: 12px; color: #8e9aaa; }
+.sidebar button { padding: 8px 10px; border-radius: 6px; margin-bottom: 2px; font-size: 14px; }
+.sidebar button.active { box-shadow: none; font-weight: 600; }
+.sidebar .pill { background: var(--accent); color: #3b2a00; font-size: 10px; font-weight: 700; padding: 0 7px; }
+
+/* Flat pages: thin dividers instead of boxes. Only tiles and the map card stay as containers. */
+.panel { background: transparent; border: 0; border-top: 1px solid var(--border); border-radius: 0; padding: 14px 0; }
+.tile { background: var(--surface); border-radius: 10px; }

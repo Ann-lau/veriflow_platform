@@ -23,22 +23,30 @@ function writeCache(value) {
 
 // Shape + colour + words: status never relies on colour alone.
 const CLASSES = [
-  { key: "working", label: "Working", color: "#2a6f97", shape: "circle" },
+  {
+    key: "working",
+    label: "Working",
+    short: "Working",
+    color: "#2a6f97",
+    shape: "circle",
+  },
   {
     key: "attention",
     label: "Needs attention",
+    short: "Attention",
     color: "#d98e04",
     shape: "square",
   },
   {
     key: "not_working",
     label: "Not working",
+    short: "Not working",
     color: "#c1432b",
     shape: "triangle",
   },
 ];
 const CLASS_BY_KEY = Object.fromEntries(CLASSES.map((c) => [c.key, c]));
-const PAGE = 12;
+const PAGE = 40;
 
 function Shape({ shape, color, x = 0, y = 0, size = 4 }) {
   if (shape === "square")
@@ -63,6 +71,19 @@ function Shape({ shape, color, x = 0, y = 0, size = 4 }) {
   return <circle cx={x} cy={y} r={size} fill={color} />;
 }
 
+// Small shape + words, used in the table and the selected-record line.
+function StatusTag({ cls }) {
+  const c = CLASS_BY_KEY[cls];
+  return (
+    <span className="st">
+      <svg width="12" height="12" viewBox="-6 -6 12 12" aria-hidden="true">
+        <Shape shape={c.shape} color={c.color} size={4.5} />
+      </svg>
+      {c.label}
+    </span>
+  );
+}
+
 // Offline map: the county outline and the points are drawn from coordinates, no map tiles needed.
 function PointMap({ points, visible, selectedId, onSelect }) {
   const view = useMemo(() => {
@@ -76,10 +97,12 @@ function PointMap({ points, visible, selectedId, onSelect }) {
     const w = (maxLon - minLon) * kx,
       h = maxLat - minLat;
     const S = 600; // square canvas
-    const pad = 24;
-    const scale = Math.min((S - 2 * pad) / w, (S - 2 * pad) / h);
+    const padTop = 36,
+      padSide = 20,
+      padBottom = 52; // room for the title and the legend
+    const scale = Math.min((S - 2 * padSide) / w, (S - padTop - padBottom) / h);
     const ox = (S - w * scale) / 2,
-      oy = (S - h * scale) / 2;
+      oy = padTop + (S - padTop - padBottom - h * scale) / 2;
     const xy = (lon, lat) => ({
       x: ox + (lon - minLon) * kx * scale,
       y: oy + (maxLat - lat) * scale,
@@ -95,6 +118,7 @@ function PointMap({ points, visible, selectedId, onSelect }) {
   }, []);
 
   const shown = points.filter((p) => visible[p.cls]);
+  const ly = view.S - 44; // legend top
   return (
     <svg
       viewBox={`0 0 ${view.S} ${view.S}`}
@@ -108,6 +132,20 @@ function PointMap({ points, visible, selectedId, onSelect }) {
         strokeWidth="1.6"
         strokeLinejoin="round"
       />
+      {/* soft halos make clusters read as density */}
+      {shown.map((p) => {
+        const { x, y } = view.project(p);
+        return (
+          <circle
+            key={`h${p.id}`}
+            cx={x}
+            cy={y}
+            r="8"
+            fill="#e0a526"
+            opacity="0.15"
+          />
+        );
+      })}
       {CLASSES.map((c) =>
         shown
           .filter((p) => p.cls === c.key)
@@ -145,43 +183,63 @@ function PointMap({ points, visible, selectedId, onSelect }) {
             />
           );
         })()}
-      <text x="20" y="34" fontSize="15" fontWeight="700" fill="#26323f">
-        Kajiado County
-      </text>
+      {!selectedId && (
+        <text x="22" y="30" fontSize="16" fontWeight="700" fill="#26323f">
+          Kajiado County
+        </text>
+      )}
+
+      {/* legend on the map, as in the mockup */}
+      <rect
+        x="12"
+        y={ly}
+        width={view.S - 24}
+        height="32"
+        rx="16"
+        fill="#fff"
+        opacity="0.95"
+      />
+      {CLASSES.map((c, i) => {
+        const x0 = 30 + i * 108;
+        return (
+          <g key={c.key}>
+            <Shape
+              shape={c.shape}
+              color={c.color}
+              x={x0}
+              y={ly + 16}
+              size={4.5}
+            />
+            <text x={x0 + 11} y={ly + 21} fontSize="13" fill="#26323f">
+              {c.short}
+            </text>
+          </g>
+        );
+      })}
       <line
-        x1="20"
-        x2={20 + view.barPx}
-        y1={view.S - 18}
-        y2={view.S - 18}
+        x1="362"
+        x2={362 + view.barPx}
+        y1={ly + 16}
+        y2={ly + 16}
         stroke="#26323f"
         strokeWidth="2"
       />
-      <text x={28 + view.barPx} y={view.S - 14} fontSize="13" fill="#26323f">
+      <text x={370 + view.barPx} y={ly + 21} fontSize="13" fill="#26323f">
         50 km
       </text>
     </svg>
   );
 }
 
-function StackRows({ rows, plain }) {
+function BarRows({ rows }) {
   const max = Math.max(...rows.map((r) => r.total), 1);
   return (
     <div className="rows">
       {rows.map((r) => (
         <div className="row" key={r.label}>
           <span className="lbl">{r.label}</span>
-          <div className="stack" style={{ width: `${(r.total / max) * 100}%` }}>
-            {plain ? (
-              <i className="seg-plain" style={{ width: "100%" }} />
-            ) : (
-              CLASSES.map((c) => (
-                <i
-                  key={c.key}
-                  className={`seg-${c.key}`}
-                  style={{ width: `${(r[c.key] / r.total) * 100}%` }}
-                />
-              ))
-            )}
+          <div className="bar">
+            <i style={{ width: `${(r.total / max) * 100}%` }} />
           </div>
           <span className="num">{r.total}</span>
         </div>
@@ -263,9 +321,10 @@ export default function Registry() {
         Water points <span className="tag real">Real WPDx</span>
       </h1>
       <p className="sub">
-        The registry of {s.total} Kajiado water points. Status is as at each
-        point&apos;s survey date, not today: {s.top_survey_year_count} of{" "}
-        {s.total} were surveyed in {s.top_survey_year}.
+        The registry of {s.total} Kajiado water points, with status as of each
+        point&apos;s survey date ({s.top_survey_year_count} of {s.total}{" "}
+        surveyed in {s.top_survey_year}). Source: Water Point Data Exchange, CC
+        BY 4.0.
       </p>
       {stale && (
         <div className="note">
@@ -273,19 +332,6 @@ export default function Registry() {
           connection returns.
         </div>
       )}
-
-      <div className="stats">
-        {CLASSES.map((c) => (
-          <div key={c.key}>
-            <small>{c.label}</small>
-            <b>{counts[c.key]}</b>
-          </div>
-        ))}
-        <div>
-          <small>Total</small>
-          <b>{s.total}</b>
-        </div>
-      </div>
 
       <div className="layout">
         <section className="mapcol">
@@ -296,23 +342,31 @@ export default function Registry() {
               selectedId={selected}
               onSelect={(p) => setSelected(p.id)}
             />
+            <div className="mapnote" aria-live="polite">
+              {sel && (
+                <>
+                  <b className="mono">{sel.wpdx_id}</b> · {sel.tech} · Kajiado{" "}
+                  {sel.sub_county} · <StatusTag cls={sel.cls} /> (
+                  {sel.year ?? "year n/a"})
+                </>
+              )}
+            </div>
           </div>
-          <div className="mapinfo" aria-live="polite">
-            {sel ? (
-              <>
-                <b>{sel.wpdx_id}</b> · {sel.tech} · Kajiado {sel.sub_county} ·{" "}
-                <span className={`st st-${sel.cls}`}>
-                  {CLASS_BY_KEY[sel.cls].label}
-                </span>{" "}
-                at survey ({sel.year ?? "year not recorded"})
-              </>
-            ) : (
-              <span className="muted">Select a point to see its record.</span>
-            )}
+          <div className="mfoot">
+            {CLASSES.map((c) => (
+              <div key={c.key}>
+                <b>{counts[c.key]}</b>
+                <small>{c.short}</small>
+              </div>
+            ))}
+            <div>
+              <b>{s.total}</b>
+              <small>Total</small>
+            </div>
           </div>
         </section>
 
-        <section>
+        <section className="listcol">
           <div className="chips">
             {CLASSES.map((c) => (
               <button
@@ -332,7 +386,7 @@ export default function Registry() {
                 >
                   <Shape shape={c.shape} color={c.color} size={4.5} />
                 </svg>
-                {c.label} {counts[c.key]}
+                {c.short}
               </button>
             ))}
           </div>
@@ -346,68 +400,60 @@ export default function Registry() {
             }}
             aria-label="Search water points"
           />
-          <table>
-            <thead>
-              <tr>
-                <th>Code</th>
-                <th>Technology</th>
-                <th>Sub-county</th>
-                <th>Status at survey</th>
-                <th>Year</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.slice(0, limit).map((p) => (
-                <tr
-                  key={p.id}
-                  onClick={() => setSelected(p.id)}
-                  className={p.id === selected ? "on" : ""}
-                >
-                  <td className="mono">{p.wpdx_id}</td>
-                  <td>{p.tech}</td>
-                  <td>{p.sub_county}</td>
-                  <td>
-                    <span className={`st st-${p.cls}`}>
-                      {CLASS_BY_KEY[p.cls].label}
-                    </span>
-                  </td>
-                  <td>{p.year ?? "n/a"}</td>
+          <div className="tablebox">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Technology</th>
+                  <th>Sub-county</th>
+                  <th>Status at survey</th>
+                  <th>Surveyed</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="muted foot">
-            Showing {Math.min(limit, rows.length)} of {rows.length}.{" "}
-            {rows.length > limit && (
-              <button className="link" onClick={() => setLimit(limit + PAGE)}>
-                Show more
-              </button>
-            )}
-          </p>
+              </thead>
+              <tbody>
+                {rows.slice(0, limit).map((p) => (
+                  <tr
+                    key={p.id}
+                    onClick={() => setSelected(p.id)}
+                    className={p.id === selected ? "on" : ""}
+                  >
+                    <td className="mono">{p.wpdx_id}</td>
+                    <td>{p.tech}</td>
+                    <td>{p.sub_county}</td>
+                    <td>
+                      <StatusTag cls={p.cls} />
+                    </td>
+                    <td>{p.year ?? "n/a"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="muted foot">
+              Showing {Math.min(limit, rows.length)} of {rows.length}.{" "}
+              {rows.length > limit && (
+                <button className="link" onClick={() => setLimit(limit + PAGE)}>
+                  Show more
+                </button>
+              )}
+            </p>
+          </div>
         </section>
       </div>
 
-      <div className="three">
-        <section>
-          <h2>By sub-county</h2>
-          <StackRows rows={data.by_sub_county} />
-          <p className="muted foot">
-            Blue is working, amber needs attention, red is not working.
-          </p>
-        </section>
+      <div className="two">
         <section>
           <h2>Technology</h2>
-          <StackRows rows={data.by_technology} plain />
+          <BarRows rows={data.by_technology} />
         </section>
         <section>
           <h2>Survey year</h2>
-          <StackRows rows={data.by_survey_year.map((r) => ({ ...r }))} plain />
+          <BarRows rows={data.by_survey_year} />
         </section>
       </div>
 
       <p className="muted foot">
-        Source: Water Point Data Exchange (WPDx), Kajiado County, licence CC BY
-        4.0. Contributors:{" "}
+        Contributors:{" "}
         {Object.entries(s.sources)
           .map(([k, v]) => `${k} (${v})`)
           .join(", ")}

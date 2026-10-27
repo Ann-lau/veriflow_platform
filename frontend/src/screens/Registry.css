@@ -1,51 +1,61 @@
 /* Water points screen. Self-contained: every rule sits under .registry and its own colours,
    so it cannot affect other screens and does not depend on index.css. */
-.registry { --slate:#26323f; --line:#dedfdb; --mut:#5d6b7a; --blue:#2a6f97; --amber:#d98e04; --red:#c1432b; color: var(--slate); }
+.registry {
+  --slate:#26323f; --line:#dedfdb; --mut:#5d6b7a; --blue:#2a6f97; --amber:#d98e04; --red:#c1432b;
+  /* The map is a square sized by the window HEIGHT, so the map, its stats and the list all fit
+     on one screen. It stops at 520px on tall screens. */
+  --mapw: clamp(280px, calc(100vh - 262px), 520px);
+  color: var(--slate);
+}
 .registry h1 { font-size: 20px; margin: 0 0 2px; }
-.registry h2 { font-size: 14px; margin: 0 0 8px; }
-.registry .sub { color: var(--mut); margin: 0 0 14px; }
+.registry h2 { font-size: 13px; margin: 0 0 8px; }
+.registry .sub { color: var(--mut); margin: 0 0 12px; font-size: 13.5px; }
 .registry .muted { color: var(--mut); font-size: 13px; }
 .registry .foot { margin-top: 8px; }
 .registry .tag { background:#e6ebf0; color: var(--slate); border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-left: 6px; vertical-align: middle; }
-.registry .note { background:#fbe9c6; color:#7a4d00; border-left: 3px solid var(--amber); padding: 9px 12px; margin: 0 0 14px; font-size: 14px; }
+.registry .note { background:#fbe9c6; color:#7a4d00; border-left: 3px solid var(--amber); padding: 9px 12px; margin: 0 0 12px; font-size: 14px; }
 
-.registry .layout { display: grid; gap: 22px; align-items: start; }
-@media (min-width: 1100px) { .registry .layout { grid-template-columns: minmax(380px, 520px) 1fr; } }
+.registry .layout { display: grid; gap: 20px; align-items: start; grid-template-columns: var(--mapw) minmax(0, 1fr); }
+@media (max-width: 900px) {
+  .registry { --mapw: 100%; }
+  .registry .layout { grid-template-columns: 1fr; }
+}
 
+/* map card: the only container on the page, as in the mockup */
 .registry .mapcol { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 1px 3px #0001; }
-.registry .mapbox { background: #dfe7ea; aspect-ratio: 1 / 1; }
+.registry .mapbox { background: #e4ecee; aspect-ratio: 1 / 1; }
 .registry .mapbox svg { display: block; width: 100%; height: 100%; }
-.registry .mapinfo { padding: 10px 14px; border-top: 1px solid var(--line); font-size: 13.5px; min-height: 42px; }
+.registry .mapinfo { padding: 8px 14px; border-top: 1px solid var(--line); font-size: 13px; min-height: 36px; line-height: 1.5; }
+.registry .mfoot { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); }
+.registry .mfoot div { padding: 8px 14px; border-right: 1px solid var(--line); }
+.registry .mfoot div:last-child { border-right: 0; }
+.registry .mfoot b { font-size: 19px; display: block; line-height: 1.25; }
+.registry .mfoot small { color: var(--mut); font-size: 12px; }
 
-.registry .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-.registry .chip { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 4px 12px; border: 2px solid var(--slate); border-radius: 99px; background: #fff; font: inherit; font-size: 13px; font-weight: 600; color: var(--slate); cursor: pointer; }
+/* list: chips, search, then a table that scrolls inside its own box, so the page does not */
+.registry .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.registry .chip { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 3px 12px; border: 2px solid var(--slate); border-radius: 99px; background: #fff; font: inherit; font-size: 13px; font-weight: 600; color: var(--slate); cursor: pointer; }
 .registry .chip[aria-pressed="false"] { opacity: .45; border-color: var(--line); }
-.registry .search { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 8px; font: inherit; margin-bottom: 8px; }
+.registry .search { width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; font: inherit; font-size: 14px; margin-bottom: 6px; }
 
+.registry .tablebox { max-height: calc(var(--mapw) - 24px); overflow: auto; }
+@media (max-width: 900px) { .registry .tablebox { max-height: 360px; } }
 .registry table { width: 100%; border-collapse: collapse; }
-.registry th { text-align: left; font-size: 12px; color: var(--mut); font-weight: 600; padding: 8px 8px; border-bottom: 2px solid var(--line); }
-.registry td { padding: 8px; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.registry th { position: sticky; top: 0; background: #f5f5f3; text-align: left; font-size: 12px; color: var(--mut); font-weight: 600; padding: 8px 10px; border-bottom: 2px solid var(--line); white-space: nowrap; }
+.registry td { padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: 13.5px; }
 .registry tbody tr { cursor: pointer; }
 .registry tbody tr:hover td, .registry tbody tr.on td { background: #fdf8e8; }
 .registry .mono { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; }
-.registry .st { font-weight: 600; }
-.registry .st-working { color: #1d5073; } .registry .st-attention { color: #7a4d00; } .registry .st-not_working { color: #9a3524; }
+.registry .st { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; white-space: nowrap; }
 .registry .link { background: none; border: none; color: var(--blue); font: inherit; font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline; }
+.registry .tablebox .foot { padding: 0 10px 8px; }
 
-.registry .three { display: grid; gap: 22px; margin-top: 22px; border-top: 1px solid var(--line); padding-top: 16px; }
-@media (min-width: 900px) { .registry .three { grid-template-columns: 1.4fr 1fr 1fr; } }
+/* breakdown: below the screen, reached by one scroll */
+.registry .two { display: grid; gap: 28px; margin-top: 18px; border-top: 1px solid var(--line); padding-top: 14px; }
+@media (min-width: 700px) { .registry .two { grid-template-columns: 1fr 1fr; } }
 .registry .rows { display: grid; gap: 7px; }
 .registry .row { display: grid; grid-template-columns: 110px 1fr 40px; gap: 8px; align-items: center; font-size: 13px; }
 .registry .num { text-align: right; font-weight: 700; }
-.registry .stack { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: #eceae3; }
-.registry .stack i { display: block; height: 100%; }
-.registry .seg-working { background: var(--blue); } .registry .seg-attention { background: var(--amber); }
-.registry .seg-not_working { background: var(--red); } .registry .seg-plain { background: var(--slate); }
+.registry .bar { height: 10px; border-radius: 5px; overflow: hidden; background: #eceae3; }
+.registry .bar i { display: block; height: 100%; background: var(--slate); }
 .registry :focus-visible { outline: 2px solid #e0a526; outline-offset: 2px; }
-
-/* Stats strip at the top so the key numbers are visible without scrolling. */
-.registry .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
-.registry .stats div { border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; background: #fff; }
-.registry .stats b { font-size: 26px; display: block; line-height: 1.2; }
-.registry .stats small { color: var(--mut); }
-@media (max-width: 600px) { .registry .stats { grid-template-columns: repeat(2, 1fr); } }
