@@ -7,6 +7,7 @@ import Dashboard from "./screens/Dashboard.jsx";
 import Registry from "./screens/Registry.jsx";
 import OnlineBanner from "./OnlineBanner.jsx";
 import { syncOutbox } from "./api.js";
+import { useConnection, ConnectionStrip } from "./connection.jsx";
 
 // What each role sees. "tab" marks the items shown in the phone's bottom bar.
 const ROLES = {
@@ -75,26 +76,26 @@ export default function App() {
   const [screen, setScreen] = useState(ROLES[readRole()].nav[0].id);
   const nav = ROLES[role].nav;
 
-  // Auto-sync: flush the queue on start, when the connection returns, and every 30 s.
-  useEffect(() => {
-    async function trySync() {
-      if (!navigator.onLine) return; // never burn data or spam errors while offline
-      try {
-        await syncOutbox();
-      } catch {
-        // Server unreachable even though the browser says online:
-        // stay quiet, the interval will retry.
-      }
-    }
+    const { tier, markSynced } = useConnection();
 
-    trySync(); // flush anything queued from a previous session
-    window.addEventListener("online", trySync); // instant flush when connection returns
-    const timer = setInterval(trySync, 30000); // safety net: retry every 30s
-    return () => {
-      window.removeEventListener("online", trySync);
-      clearInterval(timer);
-    };
-  }, []);
+    // Auto-sync: flush the queue whenever the sensed tier changes, and every 30 s.
+    // The tier decides what is sent: everything at tier 4, small records at tier 1, nothing at 0.
+    useEffect(() => {
+      if (tier === null) return; // still checking the connection
+      async function trySync() {
+        if (tier === 0) return; // never burn data or spam errors while offline
+        try {
+          const r = await syncOutbox(tier);
+          if (!r.skipped && !r.errors) markSynced();
+        } catch {
+          // Server unreachable: stay quiet, the interval will retry.
+        }
+      }
+
+      trySync();
+      const timer = setInterval(trySync, 30000);
+      return () => clearInterval(timer);
+    }, [tier, markSynced]);
 
   function chooseRole(r) {
     setRole(r);
@@ -140,6 +141,7 @@ export default function App() {
               </button>
             ))}
           </div>
+          <ConnectionStrip />
         </header>
 
         <main className="main">
