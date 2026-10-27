@@ -1,0 +1,28 @@
+/* Report breakdown */
+.log { color: #26323f; }
+.log h1 { font-size: 20px; margin: 0 0 2px; }
+.log .sub { color: #5d6b7a; margin: 0 0 12px; font-size: 13.5px; }
+.log .tag { background: #fdf1cf; color: #6f4e00; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-left: 6px; vertical-align: middle; }
+.log .muted { color: #5d6b7a; font-size: 13px; margin-top: 6px; }
+.log label { display: block; margin: 12px 0 6px; font-weight: 700; font-size: 14px; }
+.log .logform { display: grid; gap: 0 32px; }
+@media (min-width: 900px) { .log .logform { grid-template-columns: 1fr 1fr; align-items: start; } }
+
+.log .results { list-style: none; margin: 8px 0 0; padding: 0; border-top: 1px solid #dedfdb; }
+.log .results button { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid #dedfdb; padding: 10px 6px; font: inherit; color: #26323f; cursor: pointer; }
+.log .results button:hover { background: #fdf8e8; }
+.log .results small { color: #5d6b7a; display: block; }
+.log .mono { font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+.log .picked { display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 1px solid #dedfdb; border-radius: 10px; background: #fff; padding: 10px 12px; }
+.log .picked small { color: #5d6b7a; display: block; }
+.log .link { background: none; border: none; color: #2a6f97; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline; }
+
+.log .faults { display: flex; gap: 6px; flex-wrap: wrap; }
+.log .fault { min-height: 36px; padding: 4px 14px; border: 1px solid #dedfdb; border-radius: 99px; background: #fff; font: inherit; font-size: 14px; color: #26323f; cursor: pointer; }
+.log .fault[aria-pressed="true"] { border: 2px solid #26323f; font-weight: 700; }
+
+.log .loc { background: #dcebf5; color: #1d5073; border-radius: 8px; padding: 8px 10px; margin: 12px 0; font-size: 13px; }
+.log .err { color: #9a3524; font-size: 13.5px; margin: 0 0 8px; }
+.log .cta { display: block; width: 100%; min-height: 48px; border: 0; border-radius: 9px; background: #26323f; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.log .saved { background: #dcebf5; color: #1d5073; border-radius: 8px; padding: 10px 12px; margin-top: 12px; font-size: 13.5px; }
+.log .saved b { display: block; }
