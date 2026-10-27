@@ -147,3 +147,10 @@ td { padding: 8px 6px; border-top: 1px solid var(--border); }
 /* Flat pages: thin dividers instead of boxes. Only tiles and the map card stay as containers. */
 .panel { background: transparent; border: 0; border-top: 1px solid var(--border); border-radius: 0; padding: 14px 0; }
 .tile { background: var(--surface); border-radius: 10px; }
+
+
+/* Connection strip at the right of the top bar. */
+.topbar .net { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #cfd6df; white-space: nowrap; }
+.topbar .net .bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+.topbar .net .bars i { display: block; width: 4px; background: #4a586a; border-radius: 1px; }
+.topbar .net .bars i.f { background: var(--accent); }
