@@ -29,4 +29,14 @@
 .tech .topline { display: grid; gap: 10px; margin-bottom: 14px; }
 .tech .topline .tiernote { margin-bottom: 0; }
 @media (min-width: 700px) { .tech .topline { grid-template-columns: 1fr 260px; align-items: stretch; } }
-.tech .queue { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.tech .queue { display: grid; gap: 10px; }
+
+
+/* On wide screens each job becomes one full-width row: title left, progress middle, status right. */
+@media (min-width: 900px) {
+  .tech .wo { display: grid; grid-template-columns: minmax(220px, 1.2fr) 2fr 190px; grid-template-areas: "title prog pill" "code prog pill"; column-gap: 24px; align-items: center; }
+  .tech .wo b { grid-area: title; }
+  .tech .wo small { grid-area: code; }
+  .tech .wo .prog { grid-area: prog; margin: 0; }
+  .tech .wo .pill { grid-area: pill; justify-self: end; margin-top: 0; }
+}
