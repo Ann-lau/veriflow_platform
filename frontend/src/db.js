@@ -27,6 +27,7 @@ export async function saveWorkOrderOffline(data) {
   await db.transaction("rw", db.workOrders, db.outbox, async () => {
     await db.workOrders.put({
       id,
+      created_at: Date.now(),
       waterpoint_id: data.waterpoint_id,
       technician_id: data.technician_id,
       description: data.description,
