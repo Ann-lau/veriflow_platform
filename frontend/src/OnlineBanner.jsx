@@ -1,29 +1,30 @@
-import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "./db.js";
+import { useConnection } from "./connection.jsx";
 
+// Says so when the connection is weak or gone, and how much is waiting to be sent.
 export default function OnlineBanner() {
-  const [online, setOnline] = useState(navigator.onLine);
-  const queued = useLiveQuery(() => db.outbox.count(), []);
-
-  useEffect(() => {
-    const on = () => setOnline(true);
-    const off = () => setOnline(false);
-    window.addEventListener("online", on);
-    window.addEventListener("offline", off);
-    return () => {
-      window.removeEventListener("online", on);
-      window.removeEventListener("offline", off);
-    };
-  }, []);
-
-  if (online) return null;
-
-  return (
-    <div className="banner">
-      {queued > 0
-        ? `Offline: ${queued} change${queued === 1 ? "" : "s"} waiting to sync`
-        : "Offline: showing saved data"}
-    </div>
+  const { tier } = useConnection();
+  // Only operations not yet synced are waiting. The old count also included synced ones.
+  const queued = useLiveQuery(
+    () => db.outbox.where("synced").equals(0).count(),
+    [],
   );
+
+  if (tier === null || tier === 4) return null;
+
+  const waiting =
+    queued > 0
+      ? `${queued} change${queued === 1 ? "" : "s"} waiting to sync`
+      : null;
+  const text =
+    tier === 0
+      ? waiting
+        ? `Offline: ${waiting}`
+        : "Offline: showing saved data"
+      : waiting
+        ? `Weak signal: ${waiting}. Photos wait for a better connection.`
+        : "Weak signal: showing saved data";
+
+  return <div className="banner warn">{text}</div>;
 }
