@@ -36,9 +36,9 @@ export function ConnectionProvider({ children }) {
   const sensing = useRef(null);
 
   useEffect(() => {
-    sensing.current = startSensing(`${API_BASE}/`, ({ tier, rtt }) =>
-      setState({ tier, rtt }),
-    );
+        sensing.current = startSensing(`${API_BASE}/health`, ({ tier, rtt }) =>
+          setState({ tier, rtt }),
+        );
     return () => sensing.current.stop();
   }, []);
 
