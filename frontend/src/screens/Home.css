@@ -1,1 +1,25 @@
 /* Technician home */
+.tech { max-width: 560px; color: #26323f; }
+.tech h1 { font-size: 20px; margin: 0 0 2px; }
+.tech .sub { color: #5d6b7a; margin: 0 0 12px; font-size: 13.5px; }
+.tech .tag { background: #fdf1cf; color: #6f4e00; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-left: 6px; vertical-align: middle; }
+.tech .muted { color: #5d6b7a; font-size: 13px; }
+.tech .cta { display: block; width: 100%; min-height: 48px; border: 0; border-radius: 9px; background: #26323f; color: #fff; font: inherit; font-weight: 700; cursor: pointer; margin-bottom: 14px; }
+.tech .qhead { display: flex; justify-content: space-between; align-items: baseline; margin: 4px 0 8px; }
+.tech .qhead h2 { font-size: 13.5px; margin: 0; }
+.tech .link { background: none; border: none; color: #2a6f97; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0; text-decoration: underline; }
+.tech .link:disabled { color: #8e9aaa; cursor: not-allowed; text-decoration: none; }
+
+.tech .wo { background: #fff; border: 1px solid #dedfdb; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.tech .wo b { display: block; }
+.tech .wo small { color: #5d6b7a; }
+.tech .wo .pill { margin-top: 8px; }
+
+/* progress: done steps blue, current step amber, steps to come grey */
+.tech .prog { display: flex; align-items: center; margin: 8px 0 2px; }
+.tech .prog .seg { display: flex; align-items: center; }
+.tech .prog .seg:not(:first-child) { flex: 1; }
+.tech .prog i { width: 10px; height: 10px; border-radius: 50%; background: #cfd3d8; flex: none; }
+.tech .prog u { flex: 1; height: 2px; background: #cfd3d8; }
+.tech .prog i.d, .tech .prog u.d { background: #2a6f97; }
+.tech .prog i.c { background: #d98e04; }
