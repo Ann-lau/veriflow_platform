@@ -8,6 +8,7 @@ import Registry from "./screens/Registry.jsx";
 import OnlineBanner from "./OnlineBanner.jsx";
 import { syncOutbox } from "./api.js";
 import { useConnection, ConnectionStrip } from "./connection.jsx";
+import { ensureRegistry } from "./registryCache.js";
 
 // What each role sees. "tab" marks the items shown in the phone's bottom bar.
 const ROLES = {

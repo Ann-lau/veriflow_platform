@@ -3,7 +3,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../db.js";
 import { syncOutbox, refreshWaterPoints } from "../api.js";
 import { useConnection } from "../connection.jsx";
-import { useMemo, useState } from "react";
+import { readRegistryCache } from "../registryCache.js";
 import TierNotice from "../TierNotice.jsx";
 import "./Home.css";
 
