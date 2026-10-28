@@ -76,26 +76,31 @@ export default function App() {
   const [screen, setScreen] = useState(ROLES[readRole()].nav[0].id);
   const nav = ROLES[role].nav;
 
-    const { tier, markSynced } = useConnection();
+  const { tier, markSynced } = useConnection();
 
-    // Auto-sync: flush the queue whenever the sensed tier changes, and every 30 s.
-    // The tier decides what is sent: everything at tier 4, small records at tier 1, nothing at 0.
-    useEffect(() => {
-      if (tier === null) return; // still checking the connection
-      async function trySync() {
-        if (tier === 0) return; // never burn data or spam errors while offline
-        try {
-          const r = await syncOutbox(tier);
-          if (!r.skipped && !r.errors) markSynced();
-        } catch {
-          // Server unreachable: stay quiet, the interval will retry.
-        }
+  // Auto-sync: flush the queue whenever the sensed tier changes, and every 30 s.
+  // The tier decides what is sent: everything at tier 4, small records at tier 1, nothing at 0.
+  useEffect(() => {
+    if (tier === null) return; // still checking the connection
+    async function trySync() {
+      if (tier === 0) return; // never burn data or spam errors while offline
+      try {
+        const r = await syncOutbox(tier);
+        if (!r.skipped && !r.errors) markSynced();
+      } catch {
+        // Server unreachable: stay quiet, the interval will retry.
       }
+    }
 
-      trySync();
-      const timer = setInterval(trySync, 30000);
-      return () => clearInterval(timer);
-    }, [tier, markSynced]);
+    trySync();
+    const timer = setInterval(trySync, 30000);
+    return () => clearInterval(timer);
+  }, [tier, markSynced]);
+
+  // Keep a copy of the water point registry on the phone, so reporting works offline.
+  useEffect(() => {
+    if (tier === 4) ensureRegistry();
+  }, [tier]);
 
   function chooseRole(r) {
     setRole(r);
